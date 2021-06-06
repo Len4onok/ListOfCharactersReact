@@ -1,0 +1,17 @@
+
+.selected.usual{
+    font-weight: bold;
+    background-color: black;
+    color: white;
+}
+
+.usual{
+    border: 1px solid grey;
+    display: inline-block;
+    width: 25px;
+    text-align: center;
+    margin-bottom: 10px;
+    background-color: #f1f1f3;
+}
+
+
