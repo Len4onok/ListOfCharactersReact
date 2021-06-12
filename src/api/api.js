@@ -6,13 +6,13 @@ const instance=axios.create({
 })
 
 export const charactersApi = {
-     getCharacters(currentPage=1, countItemsOnPage=10) {
-         return instance.get(`people/?page=${currentPage}`)
+     getCharacters(currentPage=1, searchValue='') {
+         return instance.get(`people/?search=${searchValue}&page=${currentPage}`)
             .then(response => {
                 return response.data
             })
     },
-    getCharacterById(currentPage=1, countItemsOnPage=10, id) {
+    getCharacterById(currentPage=1, id) {
          return instance.get(`people/${id}/`)
             .then(response => {
                 return response.data

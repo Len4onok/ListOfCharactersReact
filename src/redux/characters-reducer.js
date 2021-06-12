@@ -9,6 +9,7 @@ let SET_CURRENT_PAGE = 'charactersPage/SET_CURRENT_PAGE';
 let SET_TOTAL_COUNT = 'charactersPage/SET_TOTAL_COUNT';
 let TOGGLE_IS_FETCHING = 'charactersPage/TOGGLE_IS_FETCHING';
 let SET_FAVORITE_CHARS_ID_FROM_LS = 'charactersPage/SET_FAVORITE_CHARS_ID_FROM_LS';
+let SET_SEARCH_VALUE='charactersPage/SET_SEARCH_VALUE';
 
 
 let initialState = {
@@ -16,9 +17,9 @@ let initialState = {
     favoriteChars: [],
     totalCount: 109,
     currentPage: 1,
-    countItemsOnPage: 10,
     isFetching: false,
     arrayIdFavoriteChar: [],
+    searchValue: '',
 };
 
 
@@ -59,6 +60,10 @@ const charactersReducer = (state = initialState, action) => {
             return {
                 ...state, isFetching: action.isFetching
             }
+        case SET_SEARCH_VALUE:
+            return {
+                ...state, searchValue: action.searchValue
+            }
 
         default:
             return state;
@@ -73,6 +78,7 @@ const setFavoriteCharsIDFromLS_AC=(arrayIdFavoriteChar)=>({type: SET_FAVORITE_CH
 export const setCurrentPage = (currentPage) =>({ type: SET_CURRENT_PAGE, currentPage })
 const setTotalCount = (totalCount) =>({ type: SET_TOTAL_COUNT, totalCount })
 const toggleIsFetching = (isFetching) =>({ type: TOGGLE_IS_FETCHING, isFetching })
+export const setSearchValue=(searchValue)=>({ type: SET_SEARCH_VALUE, searchValue})
 
 
 export const likeCharacter = (id) =>
@@ -92,25 +98,25 @@ const saveInLS=(getState)=>{
         localStorage.setItem('favoriteCharsID', json);
 }
 
-export const requestCharacters = (currentPage, countItemsOnPage) =>
+export const requestCharacters = (currentPage, searchValue) =>
     async (dispatch) => {
         dispatch(toggleIsFetching(true));
         getFavoriteCharsIDFromLS(dispatch);
-        const data = await charactersApi.getCharacters(currentPage, countItemsOnPage)
+        const data = await charactersApi.getCharacters(currentPage, searchValue)
         dispatch(setCharacters(data.results));
         dispatch(setTotalCount(data.count));
         dispatch(toggleIsFetching(false));
     }
 
 
-export const requestFavoriteChars = (currentPage, countItemsOnPage) =>
+export const requestFavoriteChars = (currentPage) =>
     async (dispatch) => {
         dispatch(toggleIsFetching(true));
         const arrayIdFavoriteChar=getFavoriteCharsIDFromLS(dispatch);
         let results = [];
         async function processArray(arrayIdFavoriteChar) {
             const promises = arrayIdFavoriteChar.map(async id => {
-                const result = await charactersApi.getCharacterById(currentPage, countItemsOnPage, id)
+                const result = await charactersApi.getCharacterById(currentPage, id)
                 results.push(result);
                 return result
             });
@@ -127,5 +133,6 @@ const getFavoriteCharsIDFromLS = (dispatch) => {
     dispatch(setFavoriteCharsIDFromLS_AC(arrayIdFavoriteChar));
     return arrayIdFavoriteChar;
 }
+
 
 export default charactersReducer;
