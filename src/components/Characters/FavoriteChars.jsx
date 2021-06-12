@@ -1,35 +1,29 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { useEffect } from 'react';
 import { dislikeCharacter, likeCharacter, requestFavoriteChars, setCurrentPage } from '../../redux/characters-reducer';
-import Character from './Character';
 import Preloader from '../../common/preloader';
-
-const FavoriteChars = (props) => {
-
-  useEffect(() => {
-    props.requestFavoriteChars(1, 10, props.arrayIdFavoriteChar)
-  }, [props.arrayIdFavoriteChar])
+import Chars from './Chars';
 
 
-  const favoriteCharsEl = props.favoriteChars.map((item, index) => {
-      return <Character key={index} item={item} 
-      likeCharacter={props.likeCharacter} 
-      dislikeCharacter={props.dislikeCharacter}
-      arrayIdFavoriteChar={props.arrayIdFavoriteChar}
-      />
-    })
+class FavoriteChars extends React.Component {
 
-  return <div>
-    <h1>FavoriteChars</h1>
-    {props.isFetching && <Preloader />}
-    {favoriteCharsEl}
-      {/* {(props.favoriteChars.length > 0)
-        ? 
-        : <div>To display your favorite characters, select them on the main page</div>} */}
-  </div>
+  componentDidMount = () => {
+    this.props.requestFavoriteChars(1, 10, this.props.arrayIdFavoriteChar);
+    console.log(localStorage.getItem('favoriteCharsID'))
+  }
+
+  
+  render() {
+    return (
+      <div>
+        <h1>FavoriteChars</h1>
+        {this.props.isFetching && <Preloader />}
+        <Chars {...this.props} />
+      </div>
+    )
+  }
+
 }
-
 
 let mapStateToProps = (state) => {
   return {
@@ -44,6 +38,6 @@ let mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps, {
-  setCurrentPage, requestFavoriteChars, 
+  setCurrentPage, requestFavoriteChars,
   likeCharacter, dislikeCharacter
 })(FavoriteChars)

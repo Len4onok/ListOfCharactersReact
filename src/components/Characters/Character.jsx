@@ -2,8 +2,8 @@ import React from 'react';
 import s from './Character.module.css';
 
 
-const Character = ({ item, likeCharacter, arrayIdFavoriteChar, 
-  dislikeCharacter}) => {
+const Character = ({ item, likeCharacter, arrayIdFavoriteChar,
+  dislikeCharacter }) => {
 
   let string = item.url;
   let nums = [];
@@ -12,8 +12,8 @@ const Character = ({ item, likeCharacter, arrayIdFavoriteChar,
   }
   let id = +nums.join('')
 
-
   return (
+    
     <div className={s.char}>
       <div >{item.name}</div>
       <div >{item.gender}</div>
@@ -28,7 +28,7 @@ const Character = ({ item, likeCharacter, arrayIdFavoriteChar,
             } else {
               dislikeCharacter(id)
             }
-          }}/>
+          }} />
       </div>
     </div >
   )
