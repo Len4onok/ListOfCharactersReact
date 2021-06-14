@@ -1,5 +1,4 @@
 import { charactersApi } from "../api/api";
-//import { updateObjectInArray } from "../helpers/object-helpers";
 
 let LIKE_CHARACTER = 'charactersPage/LIKE_CHARACTER';
 let DISLIKE_CHARACTER = 'charactersPage/DISLIKE_CHARACTER';
@@ -11,7 +10,6 @@ let TOGGLE_IS_FETCHING = 'charactersPage/TOGGLE_IS_FETCHING';
 let SET_FAVORITE_CHARS_ID_FROM_LS = 'charactersPage/SET_FAVORITE_CHARS_ID_FROM_LS';
 let SET_SEARCH_VALUE='charactersPage/SET_SEARCH_VALUE';
 
-
 let initialState = {
     characters: [],
     favoriteChars: [],
@@ -21,7 +19,6 @@ let initialState = {
     arrayIdFavoriteChar: [],
     searchValue: '',
 };
-
 
 const charactersReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -33,7 +30,7 @@ const charactersReducer = (state = initialState, action) => {
         case DISLIKE_CHARACTER:
             return {
                 ...state,
-                arrayIdFavoriteChar: state.arrayIdFavoriteChar.filter(id => id != action.id)
+                arrayIdFavoriteChar: state.arrayIdFavoriteChar.filter(id => id !== action.id)
             }
         case SET_CHARACTERS:
             return {
@@ -64,7 +61,6 @@ const charactersReducer = (state = initialState, action) => {
             return {
                 ...state, searchValue: action.searchValue
             }
-
         default:
             return state;
     }
@@ -102,10 +98,19 @@ export const requestCharacters = (currentPage, searchValue) =>
     async (dispatch) => {
         dispatch(toggleIsFetching(true));
         getFavoriteCharsIDFromLS(dispatch);
-        const data = await charactersApi.getCharacters(currentPage, searchValue)
-        dispatch(setCharacters(data.results));
-        dispatch(setTotalCount(data.count));
-        dispatch(toggleIsFetching(false));
+        async function processArray(currentPage, searchValue) {
+            const data = await charactersApi.getCharacters(currentPage, searchValue);
+            dispatch(setTotalCount(data.count));
+            const promises = data.results.map(async hero => {
+                const planet= await charactersApi.getHomeWorld(hero.homeworld);
+                hero.homeworld=planet.name;
+                return hero
+            });
+            await Promise.all(promises);
+            dispatch(setCharacters(data.results));
+            dispatch(toggleIsFetching(false));
+        }
+        processArray(currentPage, searchValue);
     }
 
 
@@ -117,6 +122,8 @@ export const requestFavoriteChars = (currentPage) =>
         async function processArray(arrayIdFavoriteChar) {
             const promises = arrayIdFavoriteChar.map(async id => {
                 const result = await charactersApi.getCharacterById(currentPage, id)
+                const planet= await charactersApi.getHomeWorld(result.homeworld);
+                result.homeworld=planet.name;
                 results.push(result);
                 return result
             });
@@ -133,6 +140,7 @@ const getFavoriteCharsIDFromLS = (dispatch) => {
     dispatch(setFavoriteCharsIDFromLS_AC(arrayIdFavoriteChar));
     return arrayIdFavoriteChar;
 }
+
 
 
 export default charactersReducer;

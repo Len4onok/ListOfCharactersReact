@@ -1,7 +1,9 @@
 import React from 'react';
 import s from './Paginator.module.css';
 
-const Paginator = ({ totalCount, requestCharacters, setCurrentPage, currentPage, searchValue, countItemsOnPage = 10 }) => {
+const Paginator = ({ totalCount, requestCharacters, setCurrentPage, 
+  currentPage, searchValue, countItemsOnPage = 10 }) => {
+    
   let pagesCount = Math.ceil(totalCount / countItemsOnPage);
   let pagesArr = [];
   for (let i = 1; i <= pagesCount; i++) {

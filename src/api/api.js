@@ -1,6 +1,5 @@
 import * as axios from "axios";
 
-
 const instance=axios.create({
     baseURL: 'https://swapi.dev/api/'
 })
@@ -14,6 +13,12 @@ export const charactersApi = {
     },
     getCharacterById(currentPage=1, id) {
          return instance.get(`people/${id}/`)
+            .then(response => {
+                return response.data
+            })
+    },
+    getHomeWorld(url){
+        return axios.get(url)
             .then(response => {
                 return response.data
             })

@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from "react-redux";
 import Preloader from '../../common/preloader';
 import Paginator from '../../common/Paginator';
 import Search from '../../common/Search';
-import { useEffect } from 'react';
 import { dislikeCharacter, likeCharacter, requestCharacters, setCurrentPage, setSearchValue } from '../../redux/characters-reducer';
 import Character from './Character';
 
 const Characters = (props) => {
 
   useEffect(()=>{
-    props.requestCharacters(props.currentPage, props.searchValue)
+    props.setCurrentPage(1);
+    props.requestCharacters(1, '')
   }, [])
 
   const charactersElements = props.characters.map((item, index) => {
@@ -29,7 +29,12 @@ const Characters = (props) => {
       currentPage={props.currentPage} 
       searchValue={props.searchValue}
       />
-    <Search {...props} />
+    <Search 
+      setCurrentPage={props.setCurrentPage}
+      setSearchValue={props.setSearchValue}
+      requestCharacters={props.requestCharacters}
+      currentPage={props.currentPage} 
+     />
     {charactersElements}
   </div>
 }
